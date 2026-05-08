@@ -155,8 +155,8 @@
                                     <img src="<?= $avatarUrl ?>" alt="Profile">
                                     <div class="dropdown-name"><?= esc($userName) ?></div>
                                 </a>
-                                <a href="#" class="dropdown-item">Riwayat Transaksi</a>
-                                <a href="#" class="dropdown-item">Wishlist</a>
+                                <a href="<?= base_url('profile?tab=transaksi-event-section') ?>" class="dropdown-item">Riwayat Transaksi</a>
+                                <a href="<?= base_url('profile?tab=wishlist-section') ?>" class="dropdown-item">Wishlist</a>
                                 <div class="dropdown-divider"></div>
                                 <a href="<?= base_url('logout') ?>" class="dropdown-item" style="background-color: #f8f9fa;">Keluar</a>
                             </div>
@@ -384,15 +384,15 @@
     <footer class="footer">
         <div class="footer-logo">kios<span>Tix</span></div>
         <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="https://web.facebook.com/kiostix?_rdc=1&_rdr#" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://x.com/kiosTix" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/accounts/login/?next=https%3A%2F%2Fwww.instagram.com%2Fkiostix%2F&is_from_rle" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/company/kiostix?originalSubdomain=id" target="_blank"><i class="fab fa-linkedin"></i></a>
         </div>
         <div class="footer-links">
-            <a href="#">Apa itu Kiostix?</a>
-            <a href="#">Syarat dan Ketentuan</a>
-            <a href="#">Kebijakan Privasi</a>
+            <a href="<?= base_url('about') ?>">Apa itu Kiostix?</a>
+            <a href="<?= base_url('terms') ?>">Syarat dan Ketentuan</a>
+            <a href="<?= base_url('privacy') ?>">Kebijakan Privasi</a>
         </div>
         <div class="copyright">
             &copy;2023 PT Kios Cipta Kreasi. All Rights Reserved.

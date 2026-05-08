@@ -63,4 +63,51 @@ class Profile extends BaseController
 
         return view('user/profile', $data);
     }
+
+    public function updatePassword()
+    {
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/login');
+        }
+
+        $userId = session()->get('userId');
+        $model = new UserModel();
+        $user = $model->find($userId);
+
+        $oldPassword = $this->request->getPost('old_password');
+        $newPassword = $this->request->getPost('new_password');
+        $confirmPassword = $this->request->getPost('confirm_password');
+
+        // Check if password matches (support both plain text and hash just in case)
+        $isPasswordCorrect = false;
+        if (password_verify($oldPassword, $user['password']) || $oldPassword === $user['password']) {
+            $isPasswordCorrect = true;
+        }
+
+        if (!$isPasswordCorrect) {
+            session()->setFlashdata('password_error', 'Kata sandi lama tidak sesuai.');
+            session()->setFlashdata('active_tab', 'atur-kata-sandi-section');
+            return redirect()->to('/profile');
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            session()->setFlashdata('password_error', 'Kata sandi baru tidak cocok.');
+            session()->setFlashdata('active_tab', 'atur-kata-sandi-section');
+            return redirect()->to('/profile');
+        }
+
+        if (strlen($newPassword) < 6) {
+            session()->setFlashdata('password_error', 'Kata sandi baru minimal 6 karakter.');
+            session()->setFlashdata('active_tab', 'atur-kata-sandi-section');
+            return redirect()->to('/profile');
+        }
+
+        $model->update($userId, [
+            'password' => $newPassword
+        ]);
+
+        session()->setFlashdata('password_success', 'Berhasil memperbarui kata sandi');
+        session()->setFlashdata('active_tab', 'atur-kata-sandi-section');
+        return redirect()->to('/profile');
+    }
 }
