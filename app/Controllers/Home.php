@@ -8,9 +8,6 @@ class Home extends BaseController
 {
     public function index()
     {
-        $model = new UserModel();
-        $data['semua_user'] = $model->findAll();
-
-        return view('tampilan_user', $data);
+        return view('kiostix_home');
     }
 }

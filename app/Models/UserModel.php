@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class UserModel extends Model
 {
-    protected $table      = 'users'; // Harus sama dengan nama tabel di phpMyAdmin
+    protected $table      = 'user'; 
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nama', 'email'];
+    protected $allowedFields = ['id', 'full_name', 'email', 'password', 'no_handphone', 'tanggal_lahir', 'gender', 'negara', 'kota'];
 }
