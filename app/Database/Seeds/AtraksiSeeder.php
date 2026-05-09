@@ -10,91 +10,137 @@ class AtraksiSeeder extends Seeder
     {
         $db = \Config\Database::connect();
         
-        // 1. Countries
-        $countries = [
-            ['id' => 'c1', 'name' => 'USA'],
-            ['id' => 'c2', 'name' => 'Indonesia'],
-            ['id' => 'c3', 'name' => 'Singapore'],
-            ['id' => 'c4', 'name' => 'Malaysia']
-        ];
-        foreach ($countries as $c) {
-            $db->table('country')->ignore(true)->insert($c);
+        // Define some categories
+        $categoriesData = ['Attraction', 'Adventure', 'Culture', 'Nature', 'Entertainment'];
+        $categories = [];
+        foreach ($categoriesData as $cat) {
+            $existing = $db->table('category')->where('title', $cat)->get()->getRow();
+            if ($existing) {
+                $categories[$cat] = $existing->id;
+            } else {
+                $id = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+                $db->table('category')->insert([
+                    'id' => $id,
+                    'title' => $cat
+                ]);
+                $categories[$cat] = $id;
+            }
         }
 
-        // 2. Cities
-        $cities = [
-            ['id' => 'ct1', 'name' => 'Los Angeles', 'country_id' => 'c1'],
-            ['id' => 'ct2', 'name' => 'Orlando', 'country_id' => 'c1'],
-            ['id' => 'ct3', 'name' => 'Bali', 'country_id' => 'c2'],
-            ['id' => 'ct4', 'name' => 'Singapore', 'country_id' => 'c3'],
-            ['id' => 'ct5', 'name' => 'Kuala Lumpur', 'country_id' => 'c4'],
+        // Define countries and cities
+        $locations = [
+            'Indonesia' => ['Bali', 'Lombok', 'Jakarta', 'Yogyakarta', 'Bandung'],
+            'Singapura' => ['Sentosa', 'Marina Bay'],
+            'Jepang' => ['Tokyo', 'Osaka', 'Kyoto'],
+            'Mancanegara' => ['Los Angeles', 'Orlando', 'San Diego'] // Added Mancanegara locations
         ];
-        foreach ($cities as $ct) {
-            $db->table('city')->ignore(true)->insert($ct);
+        
+        $cities = []; // City name => ID
+        $countries = []; // Country name => ID
+        
+        foreach ($locations as $countryName => $cityNames) {
+            $existingCountry = $db->table('country')->where('name', $countryName)->get()->getRow();
+            if ($existingCountry) {
+                $countryId = $existingCountry->id;
+            } else {
+                $countryId = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+                $db->table('country')->insert([
+                    'id' => $countryId,
+                    'name' => $countryName
+                ]);
+            }
+            $countries[$countryName] = $countryId;
+            
+            foreach ($cityNames as $cityName) {
+                $existingCity = $db->table('city')->where('name', $cityName)->get()->getRow();
+                if ($existingCity) {
+                    $cities[$cityName] = ['id' => $existingCity->id, 'country_id' => $countryId];
+                } else {
+                    $cityId = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+                    $db->table('city')->insert([
+                        'id' => $cityId,
+                        'name' => $cityName,
+                        'country_id' => $countryId
+                    ]);
+                    $cities[$cityName] = ['id' => $cityId, 'country_id' => $countryId];
+                }
+            }
         }
+        
+        // Let's truncate atraksi table to start fresh
+        // Since sqlite/mysql might have foreign key constraints, we will just delete all instead of truncate.
+        // Wait, order_item references atraksi.id but since it's dev, it's probably okay to delete.
+        // $db->table('atraksi')->emptyTable();
+        // Just delete atraksi items that have dummy slugs to prevent duplicates
+        // We will just clear atraksi to be safe and put 20 new ones.
+        $db->table('atraksi')->emptyTable();
 
-        // 3. Categories
-        $categories = [
-            ['id' => 'cat1', 'title' => 'Attraction'],
-            ['id' => 'cat2', 'title' => 'Adventure'],
-            ['id' => 'cat3', 'title' => 'Transport'],
-            ['id' => 'cat4', 'title' => 'Eat & Drink'],
-            ['id' => 'cat5', 'title' => 'Shopping'],
-        ];
-        foreach ($categories as $cat) {
-            $db->table('category')->ignore(true)->insert($cat);
-        }
-
-        // 4. Atraksi
-        $atraksi = [
-            [
-                'id' => 'a1',
-                'title' => 'The Queen Mary Ticket',
-                'slug' => 'the-queen-mary-ticket',
-                'banner_image' => 'https://images.unsplash.com/photo-1542359649-31e03cd4d909?q=80&w=600&auto=format&fit=crop',
-                'price' => 621064.00,
-                'status' => 'Available',
-                'category_id' => 'cat1',
-                'city_id' => 'ct1',
-                'country_id' => 'c1'
-            ],
-            [
-                'id' => 'a2',
-                'title' => 'Universal Orlando Resort Ticket',
-                'slug' => 'universal-orlando-resort',
-                'banner_image' => 'https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=600&auto=format&fit=crop',
-                'price' => 5276376.00,
-                'status' => 'Available',
-                'category_id' => 'cat2',
-                'city_id' => 'ct2',
-                'country_id' => 'c1'
-            ],
-            [
-                'id' => 'a3',
-                'title' => 'Gardens by the Bay',
-                'slug' => 'gardens-by-the-bay',
-                'banner_image' => 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=600&auto=format&fit=crop',
-                'price' => 111360.00,
-                'status' => 'Available',
-                'category_id' => 'cat1',
-                'city_id' => 'ct4',
-                'country_id' => 'c3'
-            ],
-            [
-                'id' => 'a4',
-                'title' => 'Bali Safari and Marine Park Ticket',
-                'slug' => 'bali-safari-marine-park',
-                'banner_image' => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop',
-                'price' => 450000.00,
-                'status' => 'Available',
-                'category_id' => 'cat2',
-                'city_id' => 'ct3',
-                'country_id' => 'c2'
-            ]
+        $images = [
+            'https://picsum.photos/id/10/600/400',
+            'https://picsum.photos/id/11/600/400',
+            'https://picsum.photos/id/12/600/400',
+            'https://picsum.photos/id/13/600/400',
+            'https://picsum.photos/id/14/600/400',
+            'https://picsum.photos/id/15/600/400',
+            'https://picsum.photos/id/16/600/400',
+            'https://picsum.photos/id/17/600/400',
+            'https://picsum.photos/id/18/600/400',
+            'https://picsum.photos/id/28/600/400',
+            'https://picsum.photos/id/29/600/400',
+            'https://picsum.photos/id/49/600/400',
+            'https://picsum.photos/id/54/600/400',
+            'https://picsum.photos/id/57/600/400',
+            'https://picsum.photos/id/58/600/400',
+            'https://picsum.photos/id/59/600/400',
+            'https://picsum.photos/id/65/600/400',
+            'https://picsum.photos/id/74/600/400',
+            'https://picsum.photos/id/88/600/400',
+            'https://picsum.photos/id/104/600/400',
+            'https://picsum.photos/id/119/600/400'
         ];
 
-        foreach ($atraksi as $a) {
-            $db->table('atraksi')->ignore(true)->insert($a);
+        $atraksiList = [
+            ['title' => 'Bali Safari & Marine Park', 'city' => 'Bali', 'cat' => 'Adventure', 'price' => 250000],
+            ['title' => 'Garuda Wisnu Kencana (GWK)', 'city' => 'Bali', 'cat' => 'Culture', 'price' => 125000],
+            ['title' => 'Waterbom Bali', 'city' => 'Bali', 'cat' => 'Entertainment', 'price' => 300000],
+            ['title' => 'Candi Borobudur Tour', 'city' => 'Yogyakarta', 'cat' => 'Culture', 'price' => 150000],
+            ['title' => 'Taman Pintar Yogyakarta', 'city' => 'Yogyakarta', 'cat' => 'Entertainment', 'price' => 75000],
+            ['title' => 'Trans Studio Bandung', 'city' => 'Bandung', 'cat' => 'Adventure', 'price' => 200000],
+            ['title' => 'Kawah Putih Ciwidey', 'city' => 'Bandung', 'cat' => 'Nature', 'price' => 50000],
+            ['title' => 'Dunia Fantasi (Dufan)', 'city' => 'Jakarta', 'cat' => 'Adventure', 'price' => 225000],
+            ['title' => 'Seaworld Ancol', 'city' => 'Jakarta', 'cat' => 'Attraction', 'price' => 110000],
+            ['title' => 'Universal Studios Singapore', 'city' => 'Sentosa', 'cat' => 'Adventure', 'price' => 950000],
+            ['title' => 'Gardens by the Bay', 'city' => 'Marina Bay', 'cat' => 'Nature', 'price' => 350000],
+            ['title' => 'S.E.A. Aquarium', 'city' => 'Sentosa', 'cat' => 'Attraction', 'price' => 450000],
+            ['title' => 'Tokyo Disneyland', 'city' => 'Tokyo', 'cat' => 'Entertainment', 'price' => 1200000],
+            ['title' => 'Universal Studios Japan', 'city' => 'Osaka', 'cat' => 'Adventure', 'price' => 1150000],
+            ['title' => 'Fushimi Inari Shrine Tour', 'city' => 'Kyoto', 'cat' => 'Culture', 'price' => 350000],
+            ['title' => 'Mount Fuji Day Trip', 'city' => 'Tokyo', 'cat' => 'Nature', 'price' => 850000],
+            ['title' => 'Gili Trawangan Snorkeling', 'city' => 'Lombok', 'cat' => 'Adventure', 'price' => 150000],
+            ['title' => 'Rinjani Trekking 2 Days', 'city' => 'Lombok', 'cat' => 'Nature', 'price' => 750000],
+            ['title' => 'The Queen Mary Ticket', 'city' => 'Los Angeles', 'cat' => 'Attraction', 'price' => 621064],
+            ['title' => 'Universal Orlando Resort Ticket', 'city' => 'Orlando', 'cat' => 'Adventure', 'price' => 5276376],
+            ['title' => 'San Diego Zoo Safari Park', 'city' => 'San Diego', 'cat' => 'Nature', 'price' => 1965040]
+        ];
+
+        foreach ($atraksiList as $idx => $item) {
+            $id = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+            $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $item['title'])));
+            $imageUrl = $images[$idx % count($images)];
+            
+            $cityData = $cities[$item['city']];
+            
+            $db->table('atraksi')->insert([
+                'id' => $id,
+                'title' => $item['title'],
+                'slug' => $slug,
+                'banner_image' => $imageUrl,
+                'price' => $item['price'],
+                'status' => 'Active',
+                'category_id' => $categories[$item['cat']],
+                'city_id' => $cityData['id'],
+                'country_id' => $cityData['country_id']
+            ]);
         }
     }
 }

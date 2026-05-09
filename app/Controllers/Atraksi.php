@@ -6,7 +6,9 @@ class Atraksi extends BaseController
 {
     public function index()
     {
-        return view('pages/atraksi');
+        $model = new \App\Models\AtraksiModel();
+        $atraksiList = $model->getAtraksiWithDetails();
+        return view('pages/atraksi', ['atraksiList' => $atraksiList]);
     }
 
     public function detail($slug)

@@ -61,6 +61,24 @@
         .empty-cart-msg p { color: #888; margin-bottom: 25px; }
         .btn-back-shop { display: inline-block; background: #ffaa00; color: #1a1b35; padding: 10px 25px; border-radius: 6px; font-weight: 600; text-decoration: none; }
 
+        /* Profile Dropdown */
+        .profile-dropdown { position: relative; display: flex; align-items: center;}
+        .profile-trigger { display: flex; align-items: flex-end; cursor: pointer; position: relative; width: 40px; height: 40px; border-radius: 4px; overflow: hidden; border: 2px solid white; background-color: white;}
+        .profile-thumb { width: 100%; height: 100%; object-fit: cover; }
+        .trigger-arrow { position: absolute; bottom: 0; right: 0; background: white; padding: 1px 2px; font-size: 10px; color: #333; border-top-left-radius: 4px;}
+        
+        .dropdown-menu { position: absolute; top: 120%; right: 0; background: white; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 260px; display: none; flex-direction: column; z-index: 100; border: 1px solid #eee; overflow: hidden;}
+        .dropdown-menu.active { display: flex; }
+        .dropdown-header { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0; gap: 12px; }
+        .dropdown-header img { width: 35px; height: 35px; border-radius: 4px; object-fit: cover; }
+        .dropdown-name { font-weight: 500; font-size: 15px; color: #1a1b35; word-break: break-word;}
+        .dropdown-item { padding: 15px; font-size: 15px; color: #333; transition: 0.2s; border-bottom: 1px solid #f0f0f0;}
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background-color: #f5f5f5; }
+        .dropdown-divider { height: 5px; background-color: #f5f5f5; border: none; }
+
+        .btn-masuk { background-color: #ffaa00; color: #1a1b35; padding: 8px 24px; border-radius: 4px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; text-decoration: none; }
+
         /* Footer */
         .footer { background-color: #1a1b35; color: white; padding: 50px 20px 20px; text-align: center; margin-top: auto; }
         .footer-logo { font-size: 28px; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
@@ -88,12 +106,31 @@
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Cari event dan atraksi di sini ...">
                 </div>
-                <div class="nav-right">
-                    <div class="profile-dropdown">
-                        <a href="<?= base_url('profile') ?>" style="width: 40px; height: 40px; border-radius: 4px; background: white; border: 2px solid white; display:flex; align-items:center; justify-content:center; color:#333;">
-                            <i class="fas fa-user"></i>
-                        </a>
-                    </div>
+                <div class="nav-right" style="display:flex; align-items:center; gap:20px;">
+                    <?php if(session()->get('isLoggedIn')): ?>
+                        <?php 
+                            $userName = session()->get('userName');
+                            $avatarUrl = "https://ui-avatars.com/api/?name=" . urlencode($userName) . "&background=random";
+                        ?>
+                        <div class="profile-dropdown">
+                            <div class="profile-trigger" id="profileTrigger">
+                                <img src="<?= $avatarUrl ?>" class="profile-thumb" alt="Profile">
+                                <div class="trigger-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <a href="<?= base_url('profile') ?>" class="dropdown-header" style="text-decoration:none;">
+                                    <img src="<?= $avatarUrl ?>" alt="Profile">
+                                    <div class="dropdown-name"><?= esc($userName) ?></div>
+                                </a>
+                                <a href="<?= base_url('profile?tab=transaksi-event-section') ?>" class="dropdown-item">Riwayat Transaksi</a>
+                                <a href="<?= base_url('profile?tab=wishlist-section') ?>" class="dropdown-item">Wishlist</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="<?= base_url('logout') ?>" class="dropdown-item" style="background-color: #f8f9fa;">Keluar</a>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <a href="<?= base_url('login') ?>" class="btn-masuk">Masuk</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </nav>
@@ -207,6 +244,23 @@
             } catch(e) {
                 console.error(e);
             }
+        }
+
+        // Profile Dropdown Toggle
+        const profileTrigger = document.getElementById('profileTrigger');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        if (profileTrigger && dropdownMenu) {
+            profileTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!profileTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('active');
+                }
+            });
         }
     </script>
 </body>

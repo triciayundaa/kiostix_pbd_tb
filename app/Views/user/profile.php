@@ -137,7 +137,7 @@
                     <input type="text" placeholder="Cari event dan atraksi di sini ...">
                 </div>
                 <div class="nav-right">
-                    <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="<?= base_url('cart') ?>" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
                     <?php 
                         $userName = session()->get('userName');
                         $avatarUrl = "https://ui-avatars.com/api/?name=" . urlencode($userName) . "&background=random";

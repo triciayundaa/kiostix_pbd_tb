@@ -138,7 +138,7 @@
                     <input type="text" placeholder="Cari event dan atraksi di sini ...">
                 </div>
                 <div class="nav-right">
-                    <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="<?= base_url('cart') ?>" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
                     <?php if(session()->get('isLoggedIn')): ?>
                         <?php 
                             $userName = session()->get('userName');
@@ -425,11 +425,12 @@
         
         if(bannerImg && dots.length > 0) {
             const bannerImages = [
-                'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2000&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2000&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1533174000223-14ee2823b123?q=80&w=2000&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=2000&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2000&auto=format&fit=crop'
+                'https://picsum.photos/id/104/2000/800',
+                'https://picsum.photos/id/122/2000/800',
+                'https://picsum.photos/id/134/2000/800',
+                'https://picsum.photos/id/164/2000/800',
+                'https://picsum.photos/id/183/2000/800',
+                'https://picsum.photos/id/192/2000/800'
             ];
             
             let currentSlide = 0;

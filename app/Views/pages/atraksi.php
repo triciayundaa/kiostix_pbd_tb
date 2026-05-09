@@ -139,7 +139,7 @@
                     <input type="text" placeholder="Cari event dan atraksi di sini ...">
                 </div>
                 <div class="nav-right">
-                    <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="<?= base_url('cart') ?>" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
                     <?php if(session()->get('isLoggedIn')): ?>
                         <?php 
                             $userName = session()->get('userName');
@@ -295,47 +295,24 @@
             });
         }
 
-        // Generate Dummy Data (40 items)
-        const atraksiData = [];
-        const baseImages = [
-            'https://images.unsplash.com/photo-1542359649-31e03cd4d909?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1546412414-e1885259563a?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=600&auto=format&fit=crop'
-        ];
-        const locationsID = ['Bali', 'Lombok', 'Jakarta', 'Bandung', 'Yogyakarta'];
-        const locationsManca = ['Los Angeles', 'New York', 'San Diego', 'Orlando', 'San Francisco'];
-        const categories = ['Shopping', 'Transport', 'Attraction', 'Eat & Drink', 'Adventure'];
-        
-        for(let i=1; i<=40; i++) {
-            let isID = Math.random() > 0.5;
-            let region = isID ? 'Indonesia' : 'Mancanegara';
-            let loc = isID ? locationsID[Math.floor(Math.random()*locationsID.length)] : locationsManca[Math.floor(Math.random()*locationsManca.length)];
-            let cat = categories[Math.floor(Math.random()*categories.length)];
-            
-            atraksiData.push({
-                id: i,
-                image: baseImages[i % baseImages.length],
-                location: loc,
-                region: region,
-                title: `${cat} Experience in ${loc} - Tour ${i}`,
-                slug: `${cat.toLowerCase()}-experience-in-${loc.toLowerCase().replace(' ', '-')}-tour-${i}`,
-                price: Math.floor(Math.random() * 2000000) + 100000,
-                category: cat,
-                dateAdded: new Date(2023, Math.floor(Math.random()*12), Math.floor(Math.random()*28)).getTime(),
-                popularity: Math.floor(Math.random() * 100)
-            });
-        }
-        
-        // Ensure specific titles mentioned in screenshot are present
-        atraksiData[0] = { id: 1, image: baseImages[0], location: 'Los Angeles', region: 'Mancanegara', title: 'The Queen Mary Ticket', slug: 'the-queen-mary-ticket', price: 621064, category: 'Attraction', dateAdded: Date.now(), popularity: 100 };
-        atraksiData[1] = { id: 2, image: baseImages[1], location: 'Orlando', region: 'Mancanegara', title: 'Universal Orlando Resort Ticket: Universal Studios...', slug: 'universal-orlando-resort', price: 5276376, category: 'Adventure', dateAdded: Date.now()-1000, popularity: 99 };
-        atraksiData[2] = { id: 3, image: baseImages[2], location: 'Los Angeles', region: 'Mancanegara', title: 'The Dolby Theatre Guided Tour, Home of the Acade...', slug: 'the-dolby-theatre', price: 375145, category: 'Attraction', dateAdded: Date.now()-2000, popularity: 98 };
-        atraksiData[3] = { id: 4, image: baseImages[3], location: 'San Diego', region: 'Mancanegara', title: '2-Visit Pass: San Diego Zoo + San Diego Zoo Safari Pa...', slug: 'san-diego-zoo', price: 1965040, category: 'Adventure', dateAdded: Date.now()-3000, popularity: 97 };
+        const atraksiDataFromPHP = <?= json_encode($atraksiList ?? []) ?>;
+        const atraksiData = atraksiDataFromPHP.map(item => ({
+            id: item.id,
+            image: item.banner_image || 'https://images.unsplash.com/photo-1542359649-31e03cd4d909?q=80&w=600&auto=format&fit=crop',
+            location: item.city_name || item.country_name || 'Lokasi',
+            region: item.country_name === 'Indonesia' ? 'Indonesia' : 'Mancanegara',
+            title: item.title,
+            slug: item.slug,
+            price: parseInt(item.price),
+            category: item.category_name || 'Umum',
+            dateAdded: new Date(item.created_at || Date.now()).getTime(),
+            popularity: Math.floor(Math.random() * 100)
+        }));
+
+        // Dynamically get unique locations and categories from DB data
+        const locationsID = [...new Set(atraksiData.filter(item => item.region === 'Indonesia').map(item => item.location))];
+        const locationsManca = [...new Set(atraksiData.filter(item => item.region === 'Mancanegara').map(item => item.location))];
+        const categories = [...new Set(atraksiData.map(item => item.category))];
 
         // State
         let filteredData = [...atraksiData];
