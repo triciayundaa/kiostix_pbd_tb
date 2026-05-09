@@ -129,8 +129,8 @@
                 <div class="nav-left">
                     <div class="logo">kios<span>Tix</span></div>
                     <div class="nav-links">
-                        <a href="#">Event</a>
-                        <a href="#">Atraksi</a>
+                        <a href="<?= base_url() ?>">Event</a>
+                        <a href="<?= base_url('atraksi') ?>">Atraksi</a>
                     </div>
                 </div>
                 <div class="nav-search">
@@ -187,7 +187,7 @@
         <!-- Event Terbaru -->
         <div class="mt-40">
             <div class="section-header">
-                <div class="section-title">Event Terbaru <span>Lihat semua</span></div>
+                <div class="section-title">Event Terbaru <span><a href="<?= base_url('atraksi') ?>">Lihat semua</a></span></div>
                 <div class="nav-arrows">
                     <button class="nav-arrow-btn"><i class="fas fa-arrow-left"></i></button>
                     <button class="nav-arrow-btn"><i class="fas fa-arrow-right"></i></button>
@@ -308,7 +308,7 @@
                     </div>
                     <!-- Card 4 -->
                     <div class="card" style="height: 250px;">
-                        <img src="https://images.unsplash.com/photo-1600645607380-0a75fba189a0?q=80&w=600&auto=format&fit=crop" class="card-img" style="height:150px" alt="Singapore">
+                        <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=600&auto=format&fit=crop" class="card-img" style="height:150px" alt="Singapore">
                         <div class="card-body" style="height: 100px; padding: 10px 15px;">
                             <div class="card-title" style="margin:0 0 5px 0;">Gardens by the Bay</div>
                             <div class="card-price-row">
@@ -320,14 +320,14 @@
                         </div>
                     </div>
                 </div>
-                <a href="#" class="btn-outline">Lihat Lebih Banyak</a>
+                <a href="<?= base_url('atraksi') ?>" class="btn-outline">Lihat Lebih Banyak</a>
             </div>
         </div>
 
         <!-- Lagi Populer di Malaysia -->
         <div class="mt-40">
             <div class="section-header">
-                <div class="section-title">Lagi Populer di Negeri Malaysia <span>Lihat semua</span></div>
+                <div class="section-title">Lagi Populer di Negeri Malaysia <span><a href="<?= base_url('atraksi') ?>">Lihat semua</a></span></div>
                 <div class="nav-arrows">
                     <button class="nav-arrow-btn"><i class="fas fa-arrow-left"></i></button>
                     <button class="nav-arrow-btn"><i class="fas fa-arrow-right"></i></button>
@@ -337,10 +337,10 @@
             <div class="grid-4">
                 <!-- Image Cards -->
                 <div class="card" style="border:none; box-shadow:none;">
-                    <img src="https://images.unsplash.com/photo-1544215582-843c081702f3?q=80&w=600&auto=format&fit=crop" style="width:100%; height:250px; object-fit:cover; border-radius:15px;" alt="Malaysia">
+                    <img src="https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?q=80&w=600&auto=format&fit=crop" style="width:100%; height:250px; object-fit:cover; border-radius:15px;" alt="Malaysia">
                 </div>
                 <div class="card" style="border:none; box-shadow:none;">
-                    <img src="https://images.unsplash.com/photo-1596422846543-74c6e621d15c?q=80&w=600&auto=format&fit=crop" style="width:100%; height:250px; object-fit:cover; border-radius:15px;" alt="Malaysia">
+                    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop" style="width:100%; height:250px; object-fit:cover; border-radius:15px;" alt="Malaysia">
                 </div>
                 <div class="card" style="border:none; box-shadow:none;">
                     <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=600&auto=format&fit=crop" style="width:100%; height:250px; object-fit:cover; border-radius:15px;" alt="Malaysia">
@@ -372,11 +372,11 @@
                     <div class="destinasi-label">South Korea</div>
                 </div>
                 <div class="destinasi-card">
-                    <img src="https://images.unsplash.com/photo-1596422846543-74c6e621d15c?q=80&w=400&auto=format&fit=crop" class="destinasi-img" alt="Malaysia">
+                    <img src="https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=400&auto=format&fit=crop" class="destinasi-img" alt="Malaysia">
                     <div class="destinasi-label">Malaysia</div>
                 </div>
             </div>
-            <a href="#" class="btn-outline">Lihat Lebih Banyak</a>
+            <a href="<?= base_url('atraksi') ?>" class="btn-outline">Lihat Lebih Banyak</a>
         </div>
     </div>
 
@@ -416,6 +416,95 @@
                 }
             });
         }
+
+        // Banner Carousel Logic
+        const bannerImg = document.querySelector('.banner-img');
+        const dots = document.querySelectorAll('.carousel-dots .dot');
+        const leftBtn = document.querySelector('.carousel-btn.left');
+        const rightBtn = document.querySelector('.carousel-btn.right');
+        
+        if(bannerImg && dots.length > 0) {
+            const bannerImages = [
+                'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2000&auto=format&fit=crop',
+                'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2000&auto=format&fit=crop',
+                'https://images.unsplash.com/photo-1533174000223-14ee2823b123?q=80&w=2000&auto=format&fit=crop',
+                'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=2000&auto=format&fit=crop',
+                'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2000&auto=format&fit=crop'
+            ];
+            
+            let currentSlide = 0;
+            bannerImg.style.transition = 'opacity 0.3s ease-in-out';
+            
+            function updateBanner(index) {
+                currentSlide = index;
+                if(currentSlide < 0) currentSlide = bannerImages.length - 1;
+                if(currentSlide >= bannerImages.length) currentSlide = 0;
+                
+                bannerImg.style.opacity = '0';
+                setTimeout(() => {
+                    bannerImg.src = bannerImages[currentSlide];
+                    bannerImg.style.opacity = '1';
+                }, 300);
+                
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentSlide);
+                });
+            }
+            
+            leftBtn.addEventListener('click', () => { updateBanner(currentSlide - 1); resetInterval(); });
+            rightBtn.addEventListener('click', () => { updateBanner(currentSlide + 1); resetInterval(); });
+            
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => { updateBanner(index); resetInterval(); });
+            });
+            
+            let slideInterval = setInterval(() => { updateBanner(currentSlide + 1); }, 5000);
+            
+            function resetInterval() {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(() => { updateBanner(currentSlide + 1); }, 5000);
+            }
+        }
+
+        // Horizontal Scrolling Logic for arrow buttons
+        document.querySelectorAll('.section-header').forEach(header => {
+            const navArrows = header.querySelector('.nav-arrows');
+            if(navArrows) {
+                const prevBtn = navArrows.children[0];
+                const nextBtn = navArrows.children[1];
+                const container = header.nextElementSibling;
+                
+                if(prevBtn && nextBtn && container) {
+                    // Convert grid to scrollable flex container
+                    if(container.classList.contains('grid-4') || container.classList.contains('grid-5')) {
+                        container.style.display = 'flex';
+                        container.style.overflowX = 'auto';
+                        container.style.scrollBehavior = 'smooth';
+                        // hide scrollbar
+                        container.style.scrollbarWidth = 'none'; 
+                        container.style.msOverflowStyle = 'none';
+                        const style = document.createElement('style');
+                        style.innerHTML = `.${container.className.split(' ')[0]}::-webkit-scrollbar { display: none; }`;
+                        document.head.appendChild(style);
+                        
+                        container.style.paddingBottom = '15px';
+                        
+                        Array.from(container.children).forEach(child => {
+                            child.style.flex = '0 0 auto';
+                            child.style.minWidth = container.classList.contains('grid-4') ? 'calc(25% - 15px)' : 'calc(20% - 12px)';
+                        });
+                    }
+                    
+                    prevBtn.addEventListener('click', () => {
+                        container.scrollBy({ left: -350, behavior: 'smooth' });
+                    });
+                    
+                    nextBtn.addEventListener('click', () => {
+                        container.scrollBy({ left: 350, behavior: 'smooth' });
+                    });
+                }
+            }
+        });
     </script>
 </body>
 </html>

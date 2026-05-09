@@ -12,6 +12,14 @@ $routes->match(['get', 'post'], 'register', 'Auth::register');
 $routes->get('logout', 'Auth::logout');
 $routes->match(['get', 'post'], 'profile', 'Profile::index');
 $routes->post('profile/update-password', 'Profile::updatePassword');
+$routes->get('atraksi', 'Atraksi::index');
+$routes->post('atraksi/process-payment', 'Atraksi::processPayment');
+$routes->get('atraksi/checkout/(:segment)', 'Atraksi::checkout/$1');
+$routes->get('atraksi/waiting-payment/(:segment)', 'Atraksi::waitingPayment/$1');
+$routes->get('atraksi/(:segment)', 'Atraksi::detail/$1');
+
+$routes->post('cart/add', 'Cart::add');
+$routes->get('cart/get', 'Cart::getCart');
 
 // Static Pages
 $routes->get('about', 'Pages::about');

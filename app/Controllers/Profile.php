@@ -55,10 +55,20 @@ class Profile extends BaseController
         $namaDepanDb = $names[0] ?? '';
         $namaBelakangDb = $names[1] ?? '';
 
+        $db = \Config\Database::connect();
+        $atraksiOrders = $db->table('order')
+            ->select('order.id as order_id, order.order_no, order.created_at, order.pay_status, order.grand_total, order_item.quantity, atraksi.title, atraksi.slug')
+            ->join('order_item', 'order_item.order_id = order.id')
+            ->join('atraksi', 'atraksi.id = order_item.ticket_id')
+            ->where('order.user_id', $userId)
+            ->orderBy('order.created_at', 'DESC')
+            ->get()->getResultArray();
+
         $data = [
             'user' => $user,
             'namaDepan' => $namaDepanDb,
-            'namaBelakang' => $namaBelakangDb
+            'namaBelakang' => $namaBelakangDb,
+            'atraksiOrders' => $atraksiOrders
         ];
 
         return view('user/profile', $data);

@@ -337,6 +337,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php if(empty($atraksiOrders)): ?>
                             <tr>
                                 <td colspan="6">
                                     <div class="empty-state">
@@ -345,6 +346,27 @@
                                     </div>
                                 </td>
                             </tr>
+                            <?php else: ?>
+                                <?php foreach($atraksiOrders as $order): ?>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight:600; color:#1a1b35;"><?= esc($order['order_no']) ?></div>
+                                        <div style="font-size:11px; color:#888;"><?= esc($order['title']) ?></div>
+                                    </td>
+                                    <td><?= esc(date('d M Y, H:i', strtotime($order['created_at']))) ?></td>
+                                    <td><?= esc($order['quantity']) ?> Tiket</td>
+                                    <td>
+                                        <span style="background-color:#d4edda; color:#155724; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:600;">
+                                            <?= esc($order['pay_status']) ?>
+                                        </span>
+                                    </td>
+                                    <td style="font-weight:600; color:#fca311;">Rp. <?= number_format($order['grand_total'], 0, ',', '.') ?></td>
+                                    <td>
+                                        <a href="<?= base_url('atraksi/waiting-payment/' . $order['order_id']) ?>" class="btn-details">Detail</a>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
