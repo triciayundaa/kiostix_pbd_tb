@@ -56,7 +56,16 @@ class Atraksi extends BaseController
         $user = $userModel->find(session()->get('userId'));
 
         // Retrieve selected date from query params or session
-        $visitDate = $this->request->getGet('date') ?? date('Y-m-d');
+        $visitDate = $this->request->getPost('date') ?? $this->request->getGet('date') ?? date('Y-m-d');
+        
+        $guestName = $this->request->getPost('full_name');
+        $guestEmail = $this->request->getPost('email');
+        $guestPhone = $this->request->getPost('no_handphone');
+        
+        // If form data exists, override user array properties for display
+        if ($guestName) $user['full_name'] = $guestName;
+        if ($guestEmail) $user['email'] = $guestEmail;
+        if ($guestPhone) $user['no_handphone'] = $guestPhone;
 
         return view('pages/atraksi_checkout', [
             'atraksi' => $atraksi,

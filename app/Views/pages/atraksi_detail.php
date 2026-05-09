@@ -136,14 +136,28 @@
         /* Modal Popup */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; justify-content: center; align-items: center; }
         .modal-overlay.active { display: flex; }
-        .modal { background: white; width: 100%; max-width: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column; text-align: center; }
-        .modal-header { padding: 20px; border-bottom: none; display: flex; justify-content: center; align-items: center; position: relative; }
-        .modal-title { font-size: 20px; font-weight: bold; }
-        .modal-body { padding: 0 30px 20px; }
+        .modal { background: white; width: 100%; max-width: 450px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column; }
+        .modal-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 18px; font-weight: bold; color: #333;}
+        .modal-close { cursor: pointer; color: #888; font-size: 20px; background: none; border: none; }
+        .modal-body { padding: 20px; overflow-y: auto; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: #3b50e6; }
+        .phone-group { display: flex; gap: 10px; }
+        .phone-prefix { width: 90px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: #f9f9f9; outline: none; }
+        .tnc-box { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: #555; margin-top: 20px; margin-bottom: 10px;}
+        .tnc-box input { margin-top: 2px; }
+        .tnc-box a { color: #3b50e6; font-weight: 600; }
+        
+        .modal-footer { padding: 15px 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; }
+        
         .confirm-box { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 13px; color: #555; }
         .confirm-box span { font-weight: 600; color: #333; }
-        .modal-footer { padding: 20px; border-top: none; display: flex; justify-content: center; gap: 15px; }
         .btn-ya-lanjutkan { background: #3b50e6; color: white; padding: 10px 30px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; display: inline-block; }
+        .btn-batal-modal { border: 1px solid #3b50e6; background: white; padding: 10px 30px; border-radius: 6px; color: #3b50e6; font-weight: 600; cursor: pointer; }
 
         /* Toast Notification */
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 15px 30px; border-radius: 8px; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 15px; opacity: 0; pointer-events: none; transition: 0.3s; }
@@ -389,17 +403,70 @@
         <button id="toastOk">OK</button>
     </div>
 
-    <!-- Modal Konfirmasi -->
-    <div class="modal-overlay" id="pesanModal">
+    <!-- Modal Lengkapi Data -->
+    <div class="modal-overlay" id="formDataModal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">Konfirmasi</div>
+                <div class="modal-title">Mohon Lengkapi data</div>
+                <button class="modal-close" onclick="closeFormModal()">&times;</button>
             </div>
             <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="guestName" class="form-control" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="guestEmail" class="form-control" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Konfirmasi Email</label>
+                    <input type="email" id="guestEmailConfirm" class="form-control" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Whatsapp</label>
+                    <div class="phone-group">
+                        <select class="phone-prefix">
+                            <option value="+62">ID (+62)</option>
+                        </select>
+                        <input type="text" id="guestPhone" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Jenis Kelamin</label>
+                    <select id="guestGender" class="form-control">
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Lahir (DD/MM/YYYY)</label>
+                    <input type="date" id="guestDob" class="form-control">
+                </div>
+                
+                <div class="tnc-box">
+                    <input type="checkbox" id="tncCheck">
+                    <div>Dengan ini saya menyetujui <a href="#">Terms & Conditions</a> dan <a href="#">Privacy Policy</a> yang berlaku.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-batal-modal" onclick="closeFormModal()">Batal</button>
+                <button class="btn-pesan" id="btnSubmitForm" style="background: #6c757d; border:none; padding:10px 20px; border-radius:6px; color:white; font-weight:600;">Pesan Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi (Struk) -->
+    <div class="modal-overlay" id="pesanModal">
+        <div class="modal" style="text-align: center; max-width: 400px;">
+            <div class="modal-header" style="justify-content: center; border-bottom: none;">
+                <div class="modal-title" style="font-size: 20px;">Konfirmasi</div>
+            </div>
+            <div class="modal-body" style="padding: 0 30px 20px;">
                 <div class="confirm-box">
                     E-Tiket anda akan dikirim ke<br>
-                    Email : <span><?= isset($user) ? esc($user['email']) : '-' ?></span><br>
-                    Whatsapp : <span><?= isset($user['no_handphone']) && !empty($user['no_handphone']) ? esc($user['no_handphone']) : '-' ?></span>
+                    Email : <span id="confirmEmail">-</span><br>
+                    Whatsapp : <span id="confirmPhone">-</span>
                 </div>
                 <div class="confirm-box">
                     List item yang dibeli<br>
@@ -411,9 +478,16 @@
                     Anda yakin ingin melanjutkan?
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-batal" id="cancelModal" style="padding: 10px 30px; font-size:14px; background:white; border: 1px solid #3b50e6; color: #3b50e6;">Batalkan</button>
-                <a href="#" class="btn-ya-lanjutkan" id="btnLanjutkan">Ya, Lanjutkan</a>
+            <div class="modal-footer" style="justify-content: center; border-top: none; padding: 20px;">
+                <button class="btn-batal-modal" id="cancelConfirmModal">Batalkan</button>
+                <form action="<?= base_url('atraksi/checkout/' . $atraksi['slug']) ?>" method="POST" id="checkoutForm" style="margin:0;">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="date" id="formDate">
+                    <input type="hidden" name="full_name" id="formFullName">
+                    <input type="hidden" name="email" id="formEmailVal">
+                    <input type="hidden" name="no_handphone" id="formPhoneVal">
+                    <button type="submit" class="btn-ya-lanjutkan" id="btnLanjutkan">Ya, Lanjutkan</button>
+                </form>
             </div>
         </div>
     </div>
@@ -534,7 +608,7 @@
                 html += '</div>';
                 html += `
                     <div class="cart-footer">
-                        <a href="<?= base_url('profile?tab=keranjang') ?>" class="btn-checkout-cart">Lihat Keranjang</a>
+                        <a href="<?= base_url('cart') ?>" class="btn-checkout-cart">Lihat Keranjang</a>
                     </div>
                 `;
                 cartDropdown.innerHTML = html;
@@ -612,10 +686,29 @@
         });
 
         // Modal Logic
-        const modal = document.getElementById('pesanModal');
+        const formDataModal = document.getElementById('formDataModal');
+        const pesanModal = document.getElementById('pesanModal');
+        
         const btnPesan = document.querySelector('.ticket-actions .btn-pesan');
-        const btnCancelModal = document.getElementById('cancelModal');
-        const btnLanjutkan = document.getElementById('btnLanjutkan');
+        const btnSubmitForm = document.getElementById('btnSubmitForm');
+        const cancelConfirmModal = document.getElementById('cancelConfirmModal');
+        const tncCheck = document.getElementById('tncCheck');
+
+        // Form Inputs
+        const guestName = document.getElementById('guestName');
+        const guestEmail = document.getElementById('guestEmail');
+        const guestEmailConfirm = document.getElementById('guestEmailConfirm');
+        const guestPhone = document.getElementById('guestPhone');
+        
+        // Confirm Displays
+        const confirmEmail = document.getElementById('confirmEmail');
+        const confirmPhone = document.getElementById('confirmPhone');
+
+        // Hidden Inputs for Checkout
+        const formDate = document.getElementById('formDate');
+        const formFullName = document.getElementById('formFullName');
+        const formEmailVal = document.getElementById('formEmailVal');
+        const formPhoneVal = document.getElementById('formPhoneVal');
 
         btnPesan.addEventListener('click', () => {
             if(!isLoggedIn) {
@@ -626,20 +719,62 @@
                 alert('Silakan pilih tanggal terlebih dahulu!');
                 return;
             }
+            // Reset form
+            guestName.value = '';
+            guestEmail.value = '';
+            guestEmailConfirm.value = '';
+            guestPhone.value = '';
+            tncCheck.checked = false;
             
-            // Set checkout link with date
-            btnLanjutkan.href = '<?= base_url("atraksi/checkout/" . $atraksi["slug"]) ?>?date=' + ticketDate.value;
-            
-            modal.classList.add('active');
+            formDataModal.classList.add('active');
         });
 
-        function closeModal() {
-            modal.classList.remove('active');
+        function closeFormModal() {
+            formDataModal.classList.remove('active');
         }
 
-        btnCancelModal.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if(e.target === modal) closeModal();
+        btnSubmitForm.addEventListener('click', () => {
+            // Validations
+            if(!guestName.value || !guestEmail.value || !guestPhone.value) {
+                alert('Mohon lengkapi semua data.');
+                return;
+            }
+            if(guestEmail.value !== guestEmailConfirm.value) {
+                alert('Email dan Konfirmasi Email tidak sama.');
+                return;
+            }
+            if(!tncCheck.checked) {
+                alert('Anda harus menyetujui Terms & Conditions.');
+                return;
+            }
+
+            // Populate Confirmation Modal
+            confirmEmail.innerText = guestEmail.value;
+            confirmPhone.innerText = '+62' + guestPhone.value;
+            
+            // Populate Hidden Inputs for Checkout Form
+            formDate.value = ticketDate.value;
+            formFullName.value = guestName.value;
+            formEmailVal.value = guestEmail.value;
+            formPhoneVal.value = '+62' + guestPhone.value;
+
+            // Switch modals
+            formDataModal.classList.remove('active');
+            pesanModal.classList.add('active');
+        });
+
+        cancelConfirmModal.addEventListener('click', () => {
+            pesanModal.classList.remove('active');
+            // optionally reopen the form modal if they cancel
+            formDataModal.classList.add('active');
+        });
+
+        // Close when clicking outside
+        formDataModal.addEventListener('click', (e) => {
+            if(e.target === formDataModal) closeFormModal();
+        });
+        pesanModal.addEventListener('click', (e) => {
+            if(e.target === pesanModal) pesanModal.classList.remove('active');
         });
     </script>
 </body>
