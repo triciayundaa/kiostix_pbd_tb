@@ -187,7 +187,7 @@
         <!-- Event Terbaru -->
         <div class="mt-40">
             <div class="section-header">
-                <div class="section-title">Event Terbaru <span><a href="<?= base_url('atraksi') ?>">Lihat semua</a></span></div>
+                <div class="section-title">Event Terbaru <span><a href="<?= base_url('event') ?>">Lihat semua</a></span></div>
                 <div class="nav-arrows">
                     <button class="nav-arrow-btn"><i class="fas fa-arrow-left"></i></button>
                     <button class="nav-arrow-btn"><i class="fas fa-arrow-right"></i></button>
