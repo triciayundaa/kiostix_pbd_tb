@@ -16,6 +16,7 @@ class Event extends BaseController
         $allEvents = [
             [
                 'title' => 'TERAS 2026',
+                'slug' => 'teras-2026',
                 'location' => 'Jakarta Pusat',
                 'date_str' => '29 Agt 26',
                 'date_val' => '2026-08-29',
@@ -26,6 +27,7 @@ class Event extends BaseController
             ],
             [
                 'title' => 'REGENT CUP',
+                'slug' => 'regent-cup',
                 'location' => 'Jakarta Timur',
                 'date_str' => '08 - 17 Mei 26',
                 'date_val' => '2026-05-08',
@@ -36,6 +38,7 @@ class Event extends BaseController
             ],
             [
                 'title' => 'REGENT OF SKY 2',
+                'slug' => 'regent-of-sky-2',
                 'location' => 'Jakarta Timur',
                 'date_str' => '20 Jun 26',
                 'date_val' => '2026-06-20',
@@ -46,6 +49,7 @@ class Event extends BaseController
             ],
             [
                 'title' => 'Kompilasik',
+                'slug' => 'kompilasik',
                 'location' => 'NTB',
                 'date_str' => '21 Jun 26',
                 'date_val' => '2026-06-21',
@@ -56,6 +60,7 @@ class Event extends BaseController
             ],
             [
                 'title' => 'QNF CHAPTER 5.0',
+                'slug' => 'qnf-chapter-5',
                 'location' => 'Karawang',
                 'date_str' => '11 Okt 26',
                 'date_val' => '2026-10-11',
@@ -66,6 +71,7 @@ class Event extends BaseController
             ],
             [
                 'title' => 'Dalawampu',
+                'slug' => 'dalawampu',
                 'location' => 'Jawa Barat',
                 'date_str' => '11 Jul 26',
                 'date_val' => '2026-07-11',
@@ -76,6 +82,7 @@ class Event extends BaseController
             ],
             [
                 'title' => 'FREEDOM EXODUS',
+                'slug' => 'freedom-exodus',
                 'location' => 'Jakarta Timur',
                 'date_str' => '15 Mei 26',
                 'date_val' => '2026-05-15',
@@ -120,5 +127,28 @@ class Event extends BaseController
         ];
 
         return view('pages/event', $data);
+    }
+
+    public function detail($slug)
+    {
+        $model = new EventModel();
+        $event = $model->getEventWithDetails($slug);
+
+        if (!$event) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $tickets = $model->getEventTickets($event['id']);
+        $schedules = $model->getEventSchedules($event['id']);
+        $relatedEvents = $model->getRelatedEvents($event['id']);
+
+        $data = [
+            'event' => $event,
+            'tickets' => $tickets,
+            'schedules' => $schedules,
+            'relatedEvents' => $relatedEvents
+        ];
+
+        return view('pages/event_detail', $data);
     }
 }

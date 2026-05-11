@@ -19,6 +19,7 @@ $routes->get('atraksi/waiting-payment/(:segment)', 'Atraksi::waitingPayment/$1')
 $routes->get('atraksi/(:segment)', 'Atraksi::detail/$1');
 
 $routes->get('event', 'Event::index');
+$routes->get('event/(:segment)', 'Event::detail/$1');
 
 $routes->get('cart', 'Cart::index');
 $routes->post('cart/add', 'Cart::add');

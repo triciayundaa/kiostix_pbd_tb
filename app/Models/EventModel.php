@@ -39,4 +39,48 @@ class EventModel extends Model
         
         return $builder->get()->getResultArray();
     }
+    public function getEventWithDetails($slug)
+    {
+        $builder = $this->db->table($this->table);
+        $builder->select('event.*, venue.title as venue_name, city.name as city_name');
+        $builder->join('venue', 'venue.id = event.venue_id', 'left');
+        $builder->join('city', 'city.id = venue.city_id', 'left');
+        return $builder->where('event.slug', $slug)->get()->getRowArray();
+    }
+
+    public function getEventTickets($eventId)
+    {
+        return $this->db->table('ticket')
+            ->where('event_id', $eventId)
+            ->get()->getResultArray();
+    }
+
+    public function getEventSchedules($eventId)
+    {
+        return $this->db->table('schedule')
+            ->where('event_id', $eventId)
+            ->orderBy('started_at', 'ASC')
+            ->get()->getResultArray();
+    }
+
+    public function getRelatedEvents($excludeId = null)
+    {
+        $builder = $this->db->table($this->table);
+        $builder->select('event.id, event.title, event.slug, event.banner_image, MIN(schedule.started_at) as event_date, MIN(ticket.price) as start_price, city.name as city_name');
+        
+        $builder->join('schedule', 'schedule.event_id = event.id', 'left');
+        $builder->join('ticket', 'ticket.event_id = event.id', 'left');
+        $builder->join('venue', 'venue.id = event.venue_id', 'left');
+        $builder->join('city', 'city.id = venue.city_id', 'left');
+        
+        if ($excludeId) {
+            $builder->where('event.id !=', $excludeId);
+        }
+        
+        $builder->groupBy('event.id');
+        $builder->orderBy('event_date', 'ASC');
+        $builder->limit(4);
+        
+        return $builder->get()->getResultArray();
+    }
 }
