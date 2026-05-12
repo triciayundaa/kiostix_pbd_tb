@@ -89,6 +89,67 @@
         .btn-checkout.active:hover { background-color: #2a3db6; }
         
         .description-content { font-size: 15px; line-height: 1.6; color: #555; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-container {
+            background: white; border-radius: 8px; width: 100%; max-width: 500px;
+            max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            padding: 15px 20px; border-bottom: 1px solid #eee; display: flex;
+            justify-content: space-between; align-items: center;
+        }
+        .modal-header h3 { font-size: 16px; font-weight: 600; margin: 0; color: #333; }
+        .modal-close { cursor: pointer; color: #888; font-size: 24px; border: none; background: transparent; line-height: 1; }
+        
+        .modal-body {
+            padding: 20px; overflow-y: auto; flex-grow: 1;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; color: #333; margin-bottom: 8px; font-weight: 500; }
+        .form-control {
+            width: 100%; padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 14px; outline: none; transition: 0.2s;
+        }
+        .form-control:focus { border-color: #3b50e6; }
+        
+        .phone-input-group { display: flex; gap: 0; }
+        .phone-prefix {
+            padding: 10px 15px; background: white; border: 1px solid #ddd;
+            border-right: none; border-radius: 6px 0 0 6px; font-size: 14px; color: #333;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .phone-input-group .form-control { border-radius: 0 6px 6px 0; }
+        
+        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin-top: 20px; }
+        .checkbox-group input[type="checkbox"] { margin-top: 3px; }
+        .checkbox-group label { font-size: 12px; color: #666; font-weight: 400; line-height: 1.5; margin:0; }
+        .checkbox-group a { color: #3b50e6; font-weight: 600; text-decoration: none; }
+        
+        .modal-footer {
+            padding: 15px 20px; border-top: 1px solid #eee; display: flex;
+            justify-content: flex-end; gap: 10px; background: white;
+        }
+        .btn-modal-cancel {
+            padding: 10px 20px; background: white; color: #3b50e6; border: 1px solid #ddd;
+            border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: 0.2s;
+        }
+        .btn-modal-cancel:hover { border-color: #3b50e6; }
+        .btn-modal-submit {
+            padding: 10px 20px; background: #3b50e6; color: white; border: none;
+            border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: 0.2s;
+        }
+        .btn-modal-submit:disabled { background: #a5b4fc; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -144,47 +205,53 @@
         </div>
 
         <!-- Pilihan Tiket -->
+        <form id="checkoutForm" action="<?= base_url('event/checkout') ?>" method="POST">
+            <?= csrf_field() ?>
+            <input type="hidden" name="event_slug" value="<?= esc($event['slug']) ?>">
+            
         <div class="section-box" style="background-color: #f8f9ff; border: 1px solid #edf0ff;">
             <h2 class="section-title">Pilihan Tiket</h2>
             
-            <div class="ticket-header">
-                <h3><?= esc($event['title']) ?></h3>
-                <div class="meta">
-                    <?php 
-                        $firstSchedule = !empty($schedules) ? $schedules[0] : null;
-                        $lastSchedule = !empty($schedules) ? end($schedules) : null;
-                        $dateDisplay = "Jadwal belum tersedia";
-                        if ($firstSchedule) {
-                            $startDate = date('d M Y', strtotime($firstSchedule['started_at']));
-                            if ($lastSchedule && $lastSchedule['id'] !== $firstSchedule['id']) {
-                                $endDate = date('d M Y', strtotime($lastSchedule['started_at']));
-                                $dateDisplay = $startDate . " - " . $endDate;
-                            } else {
-                                $dateDisplay = $startDate;
-                            }
-                        }
-                    ?>
-                    <div><i class="far fa-calendar-alt"></i> <?= esc($dateDisplay) ?></div>
-                    <div><i class="fas fa-map-marker-alt"></i> <?= esc($event['venue_name']) ?>, <?= esc($event['city_name']) ?></div>
-                </div>
-            </div>
 
-            <div class="ticket-list">
-                <?php foreach($tickets as $ticket): ?>
-                <div class="ticket-item" data-id="<?= esc($ticket['id']) ?>" data-price="<?= esc($ticket['price']) ?>">
-                    <div class="ticket-info">
-                        <h4><?= esc($ticket['name']) ?></h4>
-                        <div class="ticket-price-label">Harga</div>
-                        <div class="ticket-price">Rp. <?= number_format($ticket['price'], 0, ',', '.') ?></div>
-                    </div>
-                    <div class="qty-control">
-                        <button type="button" class="btn-qty btn-minus" disabled>-</button>
-                        <div class="qty-val">0</div>
-                        <button type="button" class="btn-qty btn-plus">+</button>
+                <div class="ticket-header">
+                    <h3><?= esc($event['title']) ?></h3>
+                    <div class="meta">
+                        <?php 
+                            $firstSchedule = !empty($schedules) ? $schedules[0] : null;
+                            $lastSchedule = !empty($schedules) ? end($schedules) : null;
+                            $dateDisplay = "Jadwal belum tersedia";
+                            if ($firstSchedule) {
+                                $startDate = date('d M Y', strtotime($firstSchedule['started_at']));
+                                if ($lastSchedule && $lastSchedule['id'] !== $firstSchedule['id']) {
+                                    $endDate = date('d M Y', strtotime($lastSchedule['started_at']));
+                                    $dateDisplay = $startDate . " - " . $endDate;
+                                } else {
+                                    $dateDisplay = $startDate;
+                                }
+                            }
+                        ?>
+                        <div><i class="far fa-calendar-alt"></i> <?= esc($dateDisplay) ?></div>
+                        <div><i class="fas fa-map-marker-alt"></i> <?= esc($event['venue_name']) ?>, <?= esc($event['city_name']) ?></div>
                     </div>
                 </div>
-                <?php endforeach; ?>
-            </div>
+
+                <div class="ticket-list">
+                    <?php foreach($tickets as $ticket): ?>
+                    <div class="ticket-item" data-id="<?= esc($ticket['id']) ?>" data-price="<?= esc($ticket['price']) ?>">
+                        <div class="ticket-info">
+                            <h4><?= esc($ticket['name']) ?></h4>
+                            <div class="ticket-price-label">Harga</div>
+                            <div class="ticket-price">Rp. <?= number_format($ticket['price'], 0, ',', '.') ?></div>
+                        </div>
+                        <div class="qty-control">
+                            <button type="button" class="btn-qty btn-minus" disabled>-</button>
+                            <input type="hidden" name="tickets[<?= esc($ticket['id']) ?>]" class="ticket-input" value="0">
+                            <div class="qty-val">0</div>
+                            <button type="button" class="btn-qty btn-plus">+</button>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
         </div>
 
         <!-- Lokasi -->
@@ -239,14 +306,80 @@
                 <div class="total-label">Total</div>
                 <div class="total-price" id="totalPriceDisplay">Rp. 0</div>
             </div>
-            <button class="btn-checkout" id="btnCheckout" disabled>Pesan Sekarang</button>
+            <button type="button" class="btn-checkout" id="btnCheckoutTrigger" disabled>Pesan Sekarang</button>
         </div>
     </div>
+
+    <!-- Data Completion Modal -->
+    <div class="modal-overlay" id="dataModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Mohon Lengkapi data</h3>
+                <button type="button" class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="guest_name" class="form-control" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="guest_email" class="form-control" placeholder="Insert Email Address" required>
+                </div>
+                <div class="form-group">
+                    <label>Konfirmasi Email</label>
+                    <input type="email" name="guest_email_confirm" class="form-control" placeholder="Email Address Confirmation" required>
+                </div>
+                <div class="form-group">
+                    <label>Nomor Whatsapp</label>
+                    <div class="phone-input-group">
+                        <div class="phone-prefix">ID (+62) <i class="fas fa-chevron-down" style="font-size:10px; color:#888;"></i></div>
+                        <input type="text" name="guest_phone" class="form-control" placeholder="ex: 8211xxxxx" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Jenis Kelamin</label>
+                    <select name="guest_gender" class="form-control" required>
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Provinsi</label>
+                    <select name="guest_province" class="form-control" required>
+                        <option value="" disabled selected>Select Province</option>
+                        <option value="DKI Jakarta">DKI Jakarta</option>
+                        <option value="Jawa Barat">Jawa Barat</option>
+                        <option value="Jawa Tengah">Jawa Tengah</option>
+                        <option value="Jawa Timur">Jawa Timur</option>
+                        <option value="Banten">Banten</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Lahir (DD/MM/YYYY)</label>
+                    <input type="text" name="guest_dob" class="form-control" placeholder="" required>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="tncCheck" required>
+                    <label for="tncCheck">Dengan ini saya menyetujui <a href="#">Terms & Conditions</a> dan <a href="#">Privacy Policy</a> yang berlaku.</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="modalCancel">Batal</button>
+                <button type="submit" class="btn-modal-submit" id="modalSubmit" disabled>Pesan Sekarang</button>
+            </div>
+        </div>
+    </div>
+    
+    </form> <!-- End of checkoutForm -->
 
     <script>
         const ticketItems = document.querySelectorAll('.ticket-item');
         const totalPriceDisplay = document.getElementById('totalPriceDisplay');
-        const btnCheckout = document.getElementById('btnCheckout');
+        const btnCheckout = document.getElementById('btnCheckoutTrigger');
         
         let total = 0;
 
@@ -267,12 +400,14 @@
             
             totalPriceDisplay.innerText = formatRupiah(total);
             
-            if (totalQty > 0) {
-                btnCheckout.classList.add('active');
-                btnCheckout.disabled = false;
-            } else {
-                btnCheckout.classList.remove('active');
-                btnCheckout.disabled = true;
+            if (btnCheckout) {
+                if (totalQty > 0) {
+                    btnCheckout.classList.add('active');
+                    btnCheckout.disabled = false;
+                } else {
+                    btnCheckout.classList.remove('active');
+                    btnCheckout.disabled = true;
+                }
             }
         }
 
@@ -280,11 +415,13 @@
             const btnMinus = item.querySelector('.btn-minus');
             const btnPlus = item.querySelector('.btn-plus');
             const qtyVal = item.querySelector('.qty-val');
+            const hiddenInput = item.querySelector('.ticket-input');
             
             btnPlus.addEventListener('click', () => {
                 let qty = parseInt(qtyVal.innerText);
                 qty++;
                 qtyVal.innerText = qty;
+                hiddenInput.value = qty;
                 btnMinus.disabled = false;
                 updateTotal();
             });
@@ -294,6 +431,7 @@
                 if (qty > 0) {
                     qty--;
                     qtyVal.innerText = qty;
+                    hiddenInput.value = qty;
                     if (qty === 0) {
                         btnMinus.disabled = true;
                     }
@@ -301,6 +439,59 @@
                 }
             });
         });
+
+        // Modal Logic
+        const btnCheckoutTrigger = document.getElementById('btnCheckoutTrigger');
+        const dataModal = document.getElementById('dataModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalCancel = document.getElementById('modalCancel');
+        const tncCheck = document.getElementById('tncCheck');
+        const modalSubmit = document.getElementById('modalSubmit');
+        const checkoutForm = document.getElementById('checkoutForm');
+
+        // Open modal
+        if (btnCheckoutTrigger) {
+            btnCheckoutTrigger.addEventListener('click', function() {
+                dataModal.classList.add('active');
+            });
+        }
+
+        // Close modal functions
+        function closeModal() {
+            dataModal.classList.remove('active');
+        }
+
+        if (modalClose) modalClose.addEventListener('click', closeModal);
+        if (modalCancel) modalCancel.addEventListener('click', closeModal);
+
+        // Close when clicking outside container
+        if (dataModal) {
+            dataModal.addEventListener('click', function(e) {
+                if (e.target === dataModal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Enable/disable submit based on T&C checkbox
+        if (tncCheck && modalSubmit) {
+            tncCheck.addEventListener('change', function() {
+                modalSubmit.disabled = !this.checked;
+            });
+        }
+
+        // Form submission validation
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', function(e) {
+                const email = checkoutForm.querySelector('[name="guest_email"]').value;
+                const emailConfirm = checkoutForm.querySelector('[name="guest_email_confirm"]').value;
+                
+                if (email !== emailConfirm) {
+                    e.preventDefault();
+                    alert('Konfirmasi email tidak cocok!');
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -189,7 +189,7 @@
             <?php if(!empty($events)): ?>
                 <div class="grid-4">
                     <?php foreach($events as $event): ?>
-                        <div class="card">
+                        <a href="<?= base_url('event/' . esc($event['slug'])) ?>" class="card">
                             <img src="<?= esc($event['image']) ?>" class="card-img" alt="<?= esc($event['title']) ?>">
                             <div class="card-body">
                                 <div class="card-meta"><i class="fas fa-map-marker-alt"></i> <?= esc($event['location']) ?></div>
@@ -208,7 +208,7 @@
                                     <div class="<?= ($event['status'] == 'Tiket Tersedia') ? 'text-green' : 'text-gray' ?>"><?= esc($event['status']) ?></div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>

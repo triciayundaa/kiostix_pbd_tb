@@ -19,6 +19,8 @@ $routes->get('atraksi/waiting-payment/(:segment)', 'Atraksi::waitingPayment/$1')
 $routes->get('atraksi/(:segment)', 'Atraksi::detail/$1');
 
 $routes->get('event', 'Event::index');
+$routes->post('event/checkout', 'Event::checkout');
+$routes->post('event/process-payment', 'Event::processPayment');
 $routes->get('event/(:segment)', 'Event::detail/$1');
 
 $routes->get('cart', 'Cart::index');

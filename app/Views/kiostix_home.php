@@ -196,7 +196,7 @@
             
             <div class="grid-4">
                 <!-- Card 1 -->
-                <div class="card">
+                <a href="<?= base_url('event/teras-2026') ?>" class="card">
                     <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=600&auto=format&fit=crop" class="card-img" alt="Event">
                     <div class="card-body">
                         <div class="card-meta"><i class="fas fa-map-marker-alt"></i> Jakarta Pusat</div>
@@ -210,9 +210,9 @@
                             <div class="text-green">Tiket Tersedia</div>
                         </div>
                     </div>
-                </div>
+                </a>
                 <!-- Card 2 -->
-                <div class="card">
+                <a href="<?= base_url('event/regent-cup') ?>" class="card">
                     <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop" class="card-img" alt="Event">
                     <div class="card-body">
                         <div class="card-meta"><i class="fas fa-map-marker-alt"></i> Jakarta Timur</div>
@@ -226,9 +226,9 @@
                             <div class="text-green">Tiket Tersedia</div>
                         </div>
                     </div>
-                </div>
+                </a>
                 <!-- Card 3 -->
-                <div class="card">
+                <a href="<?= base_url('event/regent-of-sky-2') ?>" class="card">
                     <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=600&auto=format&fit=crop" class="card-img" alt="Event">
                     <div class="card-body">
                         <div class="card-meta"><i class="fas fa-map-marker-alt"></i> Jakarta Timur</div>
@@ -242,9 +242,9 @@
                             <div class="text-green">Tiket Tersedia</div>
                         </div>
                     </div>
-                </div>
+                </a>
                 <!-- Card 4 -->
-                <div class="card">
+                <a href="<?= base_url('event/kompilasik') ?>" class="card">
                     <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=600&auto=format&fit=crop" class="card-img" alt="Event">
                     <div class="card-body">
                         <div class="card-meta"><i class="fas fa-map-marker-alt"></i> NTB</div>
@@ -258,7 +258,7 @@
                             <div class="text-green">Tiket Tersedia</div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
 
@@ -268,7 +268,7 @@
                 <div class="singapore-title">Yang Seru di Singapura</div>
                 <div class="grid-4">
                     <!-- Card 1 -->
-                    <div class="card" style="height: 250px;">
+                    <a href="<?= base_url('event/artscience-museum') ?>" class="card" style="height: 250px;">
                         <img src="https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=600&auto=format&fit=crop" class="card-img" style="height:150px" alt="Singapore">
                         <div class="card-body" style="height: 100px; padding: 10px 15px;">
                             <div class="card-title" style="margin:0 0 5px 0;">ArtScience Museum™</div>
@@ -279,9 +279,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     <!-- Card 2 -->
-                    <div class="card" style="height: 250px;">
+                    <a href="<?= base_url('event/national-orchid-garden') ?>" class="card" style="height: 250px;">
                         <img src="https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=600&auto=format&fit=crop" class="card-img" style="height:150px" alt="Singapore">
                         <div class="card-body" style="height: 100px; padding: 10px 15px;">
                             <div class="card-title" style="margin:0 0 5px 0;">National Orchid Garden</div>
@@ -292,9 +292,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     <!-- Card 3 -->
-                    <div class="card" style="height: 250px;">
+                    <a href="<?= base_url('event/combo-gardens-by-the-bay') ?>" class="card" style="height: 250px;">
                         <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=600&auto=format&fit=crop" class="card-img" style="height:150px" alt="Singapore">
                         <div class="card-body" style="height: 100px; padding: 10px 15px;">
                             <div class="card-title" style="margin:0 0 5px 0;">COMBO: Gardens by the Bay</div>
@@ -305,9 +305,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     <!-- Card 4 -->
-                    <div class="card" style="height: 250px;">
+                    <a href="<?= base_url('event/gardens-by-the-bay') ?>" class="card" style="height: 250px;">
                         <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=600&auto=format&fit=crop" class="card-img" style="height:150px" alt="Singapore">
                         <div class="card-body" style="height: 100px; padding: 10px 15px;">
                             <div class="card-title" style="margin:0 0 5px 0;">Gardens by the Bay</div>
@@ -318,9 +318,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-                <a href="<?= base_url('atraksi') ?>" class="btn-outline">Lihat Lebih Banyak</a>
+                <a href="<?= base_url('event?search=Singapura') ?>" class="btn-outline">Lihat Lebih Banyak</a>
             </div>
         </div>
 
